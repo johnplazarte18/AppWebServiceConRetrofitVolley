@@ -53,23 +53,25 @@ public class MainActivity extends AppCompatActivity {
         requestQueue= Volley.newRequestQueue(this);
     }
     private void jsonArrayRequest(){
+        String customURL=url+"transfer/v1/bankList";
         JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(
-                Request.Method.GET, url,
+                Request.Method.GET, customURL,
                 null,
                 new com.android.volley.Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         int size=response.length();
+                        ArrayList<String> lista=new ArrayList<String>();
                         for (int i=0;i<size;i++){
                             try {
                                 JSONObject jsonObject=new JSONObject(response.get(i).toString());
-                                ArrayList<String> lista=new ArrayList<String>();
                                 lista.add(jsonObject.getString("code")+" : "+jsonObject.getString("name"));
 
                             }catch (JSONException e){
                                 e.printStackTrace();
                             }
                         }
+                        txtVolley.setAdapter(new ArrayAdapter<String>(getApplicationContext(), layout.support_simple_spinner_dropdown_item,lista));
                     }
                 }
                 , new com.android.volley.Response.ErrorListener() {
@@ -77,16 +79,11 @@ public class MainActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
 
             }
-        }){@Override
-        public String getBodyContentType() {
-            return "transfer/v1/bankList; charset=utf-8";
-        }
-
-                @Override
+        }){
+            @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String>  params = new HashMap<String, String>();
-
-                params.put("Public-Merchant-Id:", "d6d229453ee34affa819cd9014cac51b");
+                params.put("Public-Merchant-Id", "d6d229453ee34affa819cd9014cac51b");
 
                 return params;
             }
